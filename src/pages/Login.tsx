@@ -6,24 +6,22 @@ const Login = () => {
   const { loginData, handleLoginChange } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  // Show success message if redirected from registration
+  // Show message if redirected from registration
   useEffect(() => {
     if (location.state?.successMessage) {
       setSuccessMessage(location.state.successMessage);
-      // Remove the state after displaying
-      window.history.replaceState({}, document.title);
+      window.history.replaceState({}, document.title); // remove state after reading
     }
   }, [location.state]);
 
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Simulate checking verification
-    const registeredUsers = JSON.parse(localStorage.getItem('verifiedUsers') || '[]');
-    const userExists = registeredUsers.find(
+    // Check if user exists and is verified
+    const verifiedUsers = JSON.parse(localStorage.getItem('verifiedUsers') || '[]');
+    const userExists = verifiedUsers.find(
       (user: { email: string; password: string }) =>
         user.email === loginData.email && user.password === loginData.password
     );
@@ -34,7 +32,7 @@ const Login = () => {
     }
 
     alert(`Logged in as ${loginData.email}`);
-    navigate('/dashboard'); // go to dashboard after login
+    navigate('/dashboard'); // route to dashboard
   };
 
   return (
@@ -48,22 +46,8 @@ const Login = () => {
           </p>
         )}
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={loginData.email}
-          onChange={handleLoginChange}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={loginData.password}
-          onChange={handleLoginChange}
-          required
-        />
+        <input type="email" name="email" placeholder="Email" value={loginData.email} onChange={handleLoginChange} required />
+        <input type="password" name="password" placeholder="Password" value={loginData.password} onChange={handleLoginChange} required />
         <button type="submit">Login</button>
 
         <p style={{ marginTop: '1rem', textAlign: 'center' }}>

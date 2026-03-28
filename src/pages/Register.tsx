@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const [form, setForm] = useState({ username: '', email: '', password: '' });
-  const [verificationSent, setVerificationSent] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -12,29 +12,31 @@ const Register = () => {
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Sending verification email to:', form.email);
 
-    // Simulate sending email
-    setVerificationSent(true);
+    // Store registration data temporarily (simulate email verification)
+    localStorage.setItem('pendingUser', JSON.stringify(form));
 
-    // Store registration data temporarily in localStorage
-    localStorage.setItem('pendingRegistration', JSON.stringify(form));
+    setEmailSent(true); // show "check your email" message
   };
 
-  const handleVerificationClick = () => {
-    // Simulate clicking email verification
-    const registeredUser = localStorage.getItem('pendingRegistration');
-    if (registeredUser) {
-      console.log('User verified:', JSON.parse(registeredUser));
-      localStorage.removeItem('pendingRegistration');
-      alert('You have successfully registered!');
-      navigate('/'); // Redirect to login page
+  const handleEmailVerification = () => {
+    const pendingUser = JSON.parse(localStorage.getItem('pendingUser') || '{}');
+
+    if (pendingUser.email) {
+      // Move user to verified users list
+      const verifiedUsers = JSON.parse(localStorage.getItem('verifiedUsers') || '[]');
+      verifiedUsers.push(pendingUser);
+      localStorage.setItem('verifiedUsers', JSON.stringify(verifiedUsers));
+      localStorage.removeItem('pendingUser');
+
+      // Redirect to login with success message
+      navigate('/', { state: { successMessage: 'You have successfully registered!' } });
     }
   };
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', marginTop: '5rem' }}>
-      {!verificationSent ? (
+      {!emailSent ? (
         <form onSubmit={handleRegister}>
           <h2>Register</h2>
           <input type="text" name="username" placeholder="Username" value={form.username} onChange={handleChange} required />
@@ -43,10 +45,20 @@ const Register = () => {
           <button type="submit">Register</button>
         </form>
       ) : (
-        <div style={{ textAlign: 'center', padding: '2rem', backgroundColor: '#fff', borderRadius: '10px', boxShadow: '0 5px 15px rgba(0,0,0,0.1)' }}>
-          <h2>Verification Sent!</h2>
-          <p>Click the button below to simulate verifying your email.</p>
-          <button onClick={handleVerificationClick}>Verify Email</button>
+        <div
+          style={{
+            textAlign: 'center',
+            padding: '2rem',
+            backgroundColor: '#fff',
+            borderRadius: '10px',
+            boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
+            width: '300px',
+          }}
+        >
+          <h2>Verify Your Email</h2>
+          <p>We have sent a verification link to your email: <b>{form.email}</b></p>
+          <p>Click the button below to simulate email verification.</p>
+          <button onClick={handleEmailVerification}>Verify Email</button>
         </div>
       )}
     </div>
