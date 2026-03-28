@@ -8,31 +8,30 @@ const Login = () => {
   const location = useLocation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  // Show message if redirected from registration
   useEffect(() => {
     if (location.state?.successMessage) {
       setSuccessMessage(location.state.successMessage);
-      window.history.replaceState({}, document.title); // remove state after reading
+      window.history.replaceState({}, document.title);
     }
   }, [location.state]);
 
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Check if user exists and is verified
+    // Get verified users
     const verifiedUsers = JSON.parse(localStorage.getItem('verifiedUsers') || '[]');
-    const userExists = verifiedUsers.find(
-      (user: { email: string; password: string }) =>
+    const loggedInUser = verifiedUsers.find(
+      (user: { email: string; password: string; username: string }) =>
         user.email === loginData.email && user.password === loginData.password
     );
 
-    if (!userExists) {
+    if (!loggedInUser) {
       alert('Invalid credentials or email not verified!');
       return;
     }
 
-    alert(`Logged in as ${loginData.email}`);
-    navigate('/dashboard'); // route to dashboard
+    // Navigate to dashboard with username
+    navigate('/dashboard', { state: { username: loggedInUser.username } });
   };
 
   return (
@@ -46,8 +45,22 @@ const Login = () => {
           </p>
         )}
 
-        <input type="email" name="email" placeholder="Email" value={loginData.email} onChange={handleLoginChange} required />
-        <input type="password" name="password" placeholder="Password" value={loginData.password} onChange={handleLoginChange} required />
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={loginData.email}
+          onChange={handleLoginChange}
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={loginData.password}
+          onChange={handleLoginChange}
+          required
+        />
         <button type="submit">Login</button>
 
         <p style={{ marginTop: '1rem', textAlign: 'center' }}>
