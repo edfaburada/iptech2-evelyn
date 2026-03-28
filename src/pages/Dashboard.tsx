@@ -1,10 +1,12 @@
+import React from 'react';
+
 const Dashboard = () => {
   return (
-    <div>
+    <div style={{ textAlign: 'center', marginTop: '5rem' }}>
       <h2>Dashboard</h2>
-      <p>This is your dashboard page after login.</p>
+      <p>Welcome! You are now logged in.</p>
     </div>
   );
 };
 
-export default Dashboard;
+export default Dashboard; 

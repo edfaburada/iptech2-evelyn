@@ -1,22 +1,30 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useAuth } from '../hooks/useAuth';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { loginData, handleLoginChange } = useAuth();
+  const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Login Info:', { email, password });
-    alert('Login submitted!');
+    console.log('Login:', loginData);
+    alert(`Logged in as ${loginData.email}`);
+    navigate('/dashboard'); // go to dashboard after login
   };
 
   return (
-    <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-      <h2>Login</h2>
-      <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
-      <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
-      <button type="submit">Login</button>
-    </form>
+    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '5rem' }}>
+      <form onSubmit={handleLoginSubmit}>
+        <h2>Login</h2>
+        <input type="email" name="email" placeholder="Email" value={loginData.email} onChange={handleLoginChange} required />
+        <input type="password" name="password" placeholder="Password" value={loginData.password} onChange={handleLoginChange} required />
+        <button type="submit">Login</button>
+        <p style={{ marginTop: '1rem' }}>
+          Not registered? <Link to="/register" style={{ color: '#2F80ED', textDecoration: 'underline' }}>Register now</Link>
+        </p>
+      </form>
+    </div>
   );
 };
 

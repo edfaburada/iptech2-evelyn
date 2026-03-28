@@ -1,24 +1,31 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useAuth } from '../hooks/useAuth';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Register = () => {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { registerData, handleRegisterChange } = useAuth();
+  const navigate = useNavigate();
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegisterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Register Info:', { username, email, password });
-    alert('Registration submitted!');
+    console.log('Registered:', registerData);
+    alert(`Registered user: ${registerData.username}`);
+    navigate('/'); // redirect back to login
   };
 
   return (
-    <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-      <h2>Register</h2>
-      <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
-      <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
-      <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
-      <button type="submit">Register</button>
-    </form>
+    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '5rem' }}>
+      <form onSubmit={handleRegisterSubmit}>
+        <h2>Register</h2>
+        <input type="text" name="username" placeholder="Username" value={registerData.username} onChange={handleRegisterChange} required />
+        <input type="email" name="email" placeholder="Email" value={registerData.email} onChange={handleRegisterChange} required />
+        <input type="password" name="password" placeholder="Password" value={registerData.password} onChange={handleRegisterChange} required />
+        <button type="submit">Register</button>
+        <p style={{ marginTop: '1rem' }}>
+          Already registered? <Link to="/" style={{ color: '#2F80ED', textDecoration: 'underline' }}>Login here</Link>
+        </p>
+      </form>
+    </div>
   );
 };
 
