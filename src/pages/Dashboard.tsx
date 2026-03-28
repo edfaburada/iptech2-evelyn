@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
@@ -8,22 +8,18 @@ const Dashboard = () => {
   // Get username from state passed from Login
   const username = location.state?.username;
 
-  // Redirect to login if no username (user tries to access dashboard directly)
-  if (!username) {
-    navigate('/');
-    return null;
-  }
+  // Redirect to login if no username
+  useEffect(() => {
+    if (!username) navigate('/');
+  }, [username, navigate]);
 
   const handleLogout = () => {
-    // Clear any logged-in info if stored in localStorage
     localStorage.removeItem('loggedInUser');
-    
-    // Redirect to login page
     navigate('/');
   };
 
   return (
-    <div style={{ display: 'flex', height: '100vh', fontFamily: 'Arial, sans-serif' }}>
+    <div style={{ display: 'flex', flexDirection: 'row', minHeight: '100vh', fontFamily: 'Arial, sans-serif' }}>
       
       {/* Side Panel */}
       <div style={{
@@ -34,7 +30,7 @@ const Dashboard = () => {
         flexDirection: 'column',
         padding: '2rem',
         boxSizing: 'border-box',
-      }}>
+      }} className="side-panel">
         <h2 style={{ marginBottom: '2rem' }}>Dashboard</h2>
         <p>Hi, <b>{username}</b></p>
         <button
@@ -59,14 +55,14 @@ const Dashboard = () => {
         flex: 1,
         padding: '2rem',
         backgroundColor: '#f0f4f8',
-      }}>
+      }} className="main-content">
         <h2>Welcome, {username}!</h2>
         <p>This is your dashboard. You can add more content here like charts, reports, or user info.</p>
 
         {/* Example cards */}
-        <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+        <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem', flexWrap: 'wrap' }}>
           <div style={{
-            flex: 1,
+            flex: '1 1 200px',
             backgroundColor: '#fff',
             padding: '1rem',
             borderRadius: '10px',
@@ -76,7 +72,7 @@ const Dashboard = () => {
             <p>View and edit your profile information.</p>
           </div>
           <div style={{
-            flex: 1,
+            flex: '1 1 200px',
             backgroundColor: '#fff',
             padding: '1rem',
             borderRadius: '10px',
@@ -87,6 +83,33 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Responsive styles */}
+      <style>
+        {`
+          @media (max-width: 768px) {
+            div[style*="flex-direction: row"] {
+              flex-direction: column;
+            }
+
+            .side-panel {
+              width: 100% !important;
+              flex-direction: row !important;
+              justify-content: space-between;
+              align-items: center;
+              padding: 1rem !important;
+            }
+
+            .main-content {
+              padding: 1rem !important;
+            }
+
+            .side-panel button {
+              margin-top: 0 !important;
+            }
+          }
+        `}
+      </style>
     </div>
   );
 };
